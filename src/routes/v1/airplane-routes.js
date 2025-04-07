@@ -19,7 +19,7 @@ router.get('/:id',
     AirplaneController.getAirplane);
 
     // /api/v1/airplanes/:id GET
-router.delete('/:id', 
+router.delete('/:id',
     AirplaneController.destroyAirplane);
     
 
