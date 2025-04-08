@@ -43,12 +43,26 @@ class CrudRepository {
         return response;
     }
 
-    async update(id, data){ //data → {col: cal, ...}
+    async update(Data){ //data → {col: cal, ...}
+        const airplane = await this.model.findByPk(Data.id,  {
+            attributes: { exclude: ['createdAt', 'updatedAt'] }
+          });
+        //console.log(airplane);
+        console.log("Data here: ",Data);
+        console.log("airplane here:", airplane.dataValues);
+        
+        console.log(Data == airplane.dataValues);
+        
+        if(!airplane){
+            throw new AppError(`Airplane update not found with id: ${Data.id} `, StatusCodes.NOT_FOUND)
+        }
+    
         const response = await this.model.update(Data, {
             where: {
-                id: id
+                id: Data.id
             }
         });
+        
         return response;
     }
 }

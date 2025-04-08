@@ -2,6 +2,7 @@ const {StatusCodes} = require('http-status-codes')
 const { AirplaneRepository } = require('../repositories');
 const {} = require('../repositories/airplane-repository');
 const AppError = require('../utils/errors/app-error');
+const { log } = require('winston');
 
 const airplaneRepository = new AirplaneRepository();
 async function createAirplane (data){
@@ -21,6 +22,34 @@ async function createAirplane (data){
             throw new AppError(explanation, StatusCodes.BAD_REQUEST);
         }
         throw new AppError('Cannot create a new Airplane object', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function updateAirplane (data){
+    
+    try {
+        //getAirplane(data.id);
+        const airplane = await airplaneRepository.update(data);
+        console.log(airplane);
+        
+        
+        return airplane;
+    } catch (error) {
+        
+        if(error.name == 'SequelizeValidationError'){
+            let explanation = [];
+            
+            error.errors.forEach((err) => {
+                explanation.push(err.message);
+            })
+            
+            throw new AppError(explanation, StatusCodes.BAD_REQUEST);
+        }
+        if(error.statusCode==StatusCodes.NOT_FOUND) {
+            throw new AppError(error.explanation, StatusCodes.NOT_FOUND)
+        }
+        
+        throw new AppError('Cannot update Airplane object', StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -61,5 +90,6 @@ module.exports = {
     createAirplane,
     getAirplanes,
     getAirplane,
-    destroyAirplane
+    destroyAirplane,
+    updateAirplane
 }
