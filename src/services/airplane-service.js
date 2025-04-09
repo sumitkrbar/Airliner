@@ -28,7 +28,8 @@ async function createAirplane (data){
 async function updateAirplane (data){
     
     try {
-        //getAirplane(data.id);
+        const isAirplanePresent = await airplaneRepository.get(data.id);
+        
         const airplane = await airplaneRepository.update(data);
         console.log(airplane);
         
@@ -46,7 +47,7 @@ async function updateAirplane (data){
             throw new AppError(explanation, StatusCodes.BAD_REQUEST);
         }
         if(error.statusCode==StatusCodes.NOT_FOUND) {
-            throw new AppError(error.explanation, StatusCodes.NOT_FOUND)
+            throw new AppError(`No airplane found with id ${data.id}`, StatusCodes.NOT_FOUND)
         }
         
         throw new AppError('Cannot update Airplane object', StatusCodes.INTERNAL_SERVER_ERROR);
